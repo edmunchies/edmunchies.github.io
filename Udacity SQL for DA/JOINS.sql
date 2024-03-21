@@ -47,3 +47,10 @@ Provide the name for each region for every order, as well as the account name an
   ON a.sales_rep_id = s.id
   JOIN region r
   ON r.id = s.region_id;                                           
+
+-- Filtering
+Logic in the ON clause reduces the rows before combining the tables. 
+Login in the WHERE clause occurs after the JOIN occurs. 
+A simple rule to remember this is that, when the database executes this query, it executes the join and everything in the ON clause first. Think of this as building the new result set. That result set is then filtered using the WHERE clause.
+
+The fact that this example is a left join is important. Because inner joins only return the rows for which the two tables match, moving this filter to the ON clause of an inner join will produce the same result as keeping it in the WHERE clause.
