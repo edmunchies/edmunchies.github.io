@@ -11,3 +11,4 @@ Try pulling standard_qty, gloss_qty, and poster_qty from the orders table, and t
   ON orders.id = accounts.id;
 
 Notice this result is the same as if you switched the tables in the FROM and JOIN. Additionally, which side of the = a column is listed doesn't matter.
+The PK is always equal to the FK
