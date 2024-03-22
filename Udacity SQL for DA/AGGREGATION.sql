@@ -66,7 +66,7 @@ Via what channel did the most recent (latest) web_event occur, which account was
   FROM web_events w
   JOIN accounts a
   ON w.account_id = a.id
-  ORDER BY date
+  ORDER BY date DESC
   LIMIT 1;
   
 Find the total number of times each type of channel from the web_events was used. Your final table should have two columns - the channel and the number of times the channel was used.
@@ -83,11 +83,12 @@ Who was the primary contact associated with the earliest web_event?
   LIMIT 1;
   
 What was the smallest order placed by each account in terms of total usd. Provide only two columns - the account name and the total usd. Order from smallest dollar amounts to largest.
-  SELECT a.name, o.total_amt_usd AS total_usd
-  FROM accounts a
-  JOIN orders o 
+  SELECT a.name, MIN(total_amt_usd) smallest_order
+  FROM accounts a 
+  JOIN orders o
   ON a.id = o.account_id
-  ORDER BY total_usd;
+  GROUP BY a.name
+  ORDER BY smallest_order;
   
 Find the number of sales reps in each region. Your final table should have two columns - the region and the number of sales_reps. Order from fewest reps to most reps.
   SELECT r.name AS region, COUNT(s.name) AS sales_reps
