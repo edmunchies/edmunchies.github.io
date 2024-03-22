@@ -75,5 +75,5 @@ Find all the orders that occurred in 2015. Your final table should have 4 column
   FROM accounts a
   JOIN orders o 
   ON a.id = o.account_id
-  WHERE o.occurred_at BETWEEN '2015-01-01' AND '2015-12-31'
+  WHERE o.occurred_at BETWEEN '2015-01-01' AND '2016-01-01'
   ORDER BY o.occurred_at;
