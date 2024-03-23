@@ -77,25 +77,25 @@ Which account has the most orders?
   LIMIT 1;
 
 Which accounts spent more than 30,000 usd total across all orders?
-  SELECT a.id, a.name, SUM(standard_amt_usd + gloss_amt_usd + poster_amt_usd) 
+  SELECT a.id, a.name, SUM(total_amt_usd) total_spent
   FROM accounts a
   JOIN orders o
   ON a.id = o.account_id
   GROUP BY a.id, a.name
-  HAVING SUM(standard_amt_usd + gloss_amt_usd + poster_amt_usd)  > 30000
-  ORDER BY sum;
+  HAVING SUM(total_amt_usd)  > 30000
+  ORDER BY total_spent;
 
 Which accounts spent less than 1,000 usd total across all orders?
-  SELECT a.id, a.name, SUM(standard_amt_usd + poster_amt_usd + gloss_amt_usd) AS total_spend
+  SELECT a.id, a.name, SUM(total_amt_usd) AS total_spend
   FROM accounts a
   JOIN orders o
   ON a.id = o.account_id
   GROUP BY a.id, a.name
-  HAVING SUM(standard_amt_usd + poster_amt_usd + gloss_amt_usd) < 1000
+  HAVING SUM(total_amt_usd) < 1000
   ORDER BY total_spend DESC;
 
 Which account has spent the most with us?
-  SELECT a.id, a.name, SUM(standard_amt_usd + poster_amt_usd + gloss_amt_usd) AS total_spend
+  SELECT a.id, a.name, SUM(total_amt_usd) AS total_spend
   FROM accounts a
   JOIN orders o
   ON a.id = o.account_id
@@ -104,7 +104,7 @@ Which account has spent the most with us?
   LIMIT 1;
 
 Which account has spent the least with us?
-  SELECT a.id, a.name, SUM(standard_amt_usd + poster_amt_usd + gloss_amt_usd) AS total_spend
+  SELECT a.id, a.name, SUM(total_amt_usd) AS total_spend
   FROM accounts a
   JOIN orders o
   ON a.id = o.account_id
@@ -113,21 +113,21 @@ Which account has spent the least with us?
   LIMIT 1;
 
 Which accounts used facebook as a channel to contact customers more than 6 times?
-  SELECT a.id, a.name, COUNT(*) channel_count
-  FROM accounts a
-  JOIN web_events w
-  ON a.id = w.account_id
-  GROUP BY a.id, a.name, w.channel
-  HAVING COUNT(*) > 6 AND w.channel = 'facebook'
-  ORDER BY a.name;
-
-Which account used facebook most as a channel?
   SELECT a.id, a.name, w.channel, COUNT(*) channel_count
   FROM accounts a
   JOIN web_events w
   ON a.id = w.account_id
   GROUP BY a.id, a.name, w.channel
   HAVING COUNT(*) > 6 AND w.channel = 'facebook'
+  ORDER BY channel_count;
+
+Which account used facebook most as a channel?
+  SELECT a.id, a.name, w.channel, COUNT(*) channel_count
+  FROM accounts a
+  JOIN web_events w
+  ON a.id = w.account_id
+  WHERE w.channel = 'facebook'
+  GROUP BY a.id, a.name, w.channel
   ORDER BY channel_count DESC
   LIMIT 1;
 
