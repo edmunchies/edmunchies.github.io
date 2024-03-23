@@ -47,6 +47,8 @@ Have any sales reps worked on more than one account?
 -- HAVING
 HAVING is the “clean” way to filter a query that has been aggregated, but this is also commonly done using a subquery(opens in a new tab). 
 Essentially, any time you want to perform a WHERE on an element of your query that was created by an aggregate, you need to use HAVING instead.
+Always attach the aggregate function code with HAVING clause, cannot use column alias.
+
 How many of the sales reps have more than 5 accounts that they manage?
   SELECT s.id, s.name, COUNT(*) num_accounts
   FROM accounts a
@@ -75,22 +77,65 @@ Which account has the most orders?
   LIMIT 1;
 
 Which accounts spent more than 30,000 usd total across all orders?
-
+  SELECT a.id, a.name, SUM(standard_amt_usd + gloss_amt_usd + poster_amt_usd) 
+  FROM accounts a
+  JOIN orders o
+  ON a.id = o.account_id
+  GROUP BY a.id, a.name
+  HAVING SUM(standard_amt_usd + gloss_amt_usd + poster_amt_usd)  > 30000
+  ORDER BY sum;
 
 Which accounts spent less than 1,000 usd total across all orders?
-
+  SELECT a.id, a.name, SUM(standard_amt_usd + poster_amt_usd + gloss_amt_usd) AS total_spend
+  FROM accounts a
+  JOIN orders o
+  ON a.id = o.account_id
+  GROUP BY a.id, a.name
+  HAVING SUM(standard_amt_usd + poster_amt_usd + gloss_amt_usd) < 1000
+  ORDER BY total_spend DESC;
 
 Which account has spent the most with us?
-
+  SELECT a.id, a.name, SUM(standard_amt_usd + poster_amt_usd + gloss_amt_usd) AS total_spend
+  FROM accounts a
+  JOIN orders o
+  ON a.id = o.account_id
+  GROUP BY a.id, a.name
+  ORDER BY total_spend DESC
+  LIMIT 1;
 
 Which account has spent the least with us?
-
+  SELECT a.id, a.name, SUM(standard_amt_usd + poster_amt_usd + gloss_amt_usd) AS total_spend
+  FROM accounts a
+  JOIN orders o
+  ON a.id = o.account_id
+  GROUP BY a.id, a.name
+  ORDER BY total_spend 
+  LIMIT 1;
 
 Which accounts used facebook as a channel to contact customers more than 6 times?
-
+  SELECT a.id, a.name, COUNT(*) channel_count
+  FROM accounts a
+  JOIN web_events w
+  ON a.id = w.account_id
+  GROUP BY a.id, a.name, w.channel
+  HAVING COUNT(*) > 6 AND w.channel = 'facebook'
+  ORDER BY a.name;
 
 Which account used facebook most as a channel?
-
+  SELECT a.id, a.name, w.channel, COUNT(*) channel_count
+  FROM accounts a
+  JOIN web_events w
+  ON a.id = w.account_id
+  GROUP BY a.id, a.name, w.channel
+  HAVING COUNT(*) > 6 AND w.channel = 'facebook'
+  ORDER BY channel_count DESC
+  LIMIT 1;
 
 Which channel was most frequently used by most accounts?
-
+  SELECT a.id, a.name, w.channel, COUNT(*) channel_count
+  FROM accounts a
+  JOIN web_events w
+  ON a.id = w.account_id
+  GROUP BY a.id, a.name, w.channel
+  ORDER BY channel_count DESC
+  LIMIT 10;
