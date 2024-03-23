@@ -34,3 +34,10 @@ Determine the number of times a particular channel was used in the web_events ta
   ON s.region_id = r.id
   GROUP BY r.name, w.channel
   ORDER BY channel_count DESC;
+
+-- DISTINCT 
+Use DISTINCT to test if there are any accounts associated with more than one region.
+  SELECT DISTINCT id, name
+  FROM accounts;
+
+Have any sales reps worked on more than one account?
