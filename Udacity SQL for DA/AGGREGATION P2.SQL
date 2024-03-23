@@ -43,3 +43,54 @@ Use DISTINCT to test if there are any accounts associated with more than one reg
 Have any sales reps worked on more than one account?
   SELECT DISTINCT id, name
   FROM sales_reps;
+
+-- HAVING
+HAVING is the “clean” way to filter a query that has been aggregated, but this is also commonly done using a subquery(opens in a new tab). 
+Essentially, any time you want to perform a WHERE on an element of your query that was created by an aggregate, you need to use HAVING instead.
+How many of the sales reps have more than 5 accounts that they manage?
+  SELECT s.id, s.name, COUNT(*) num_accounts
+  FROM accounts a
+  JOIN sales_reps s
+  ON s.id = a.sales_rep_id
+  GROUP BY s.id, s.name
+  HAVING COUNT(*) > 5
+  ORDER BY num_accounts;
+
+How many accounts have more than 20 orders?
+  SELECT a.id, a.name, COUNT(*) total_orders
+  FROM accounts a
+  JOIN orders o 
+  ON a.id = o.account_id
+  GROUP BY a.id, a.name
+  HAVING COUNT(*) > 20
+  ORDER BY total_orders;
+
+Which account has the most orders?
+  SELECT a.id, a.name, COUNT(*) total_orders
+  FROM accounts a
+  JOIN orders o 
+  ON a.id = o.account_id
+  GROUP BY a.id, a.name
+  ORDER BY total_orders DESC
+  LIMIT 1;
+
+Which accounts spent more than 30,000 usd total across all orders?
+
+
+Which accounts spent less than 1,000 usd total across all orders?
+
+
+Which account has spent the most with us?
+
+
+Which account has spent the least with us?
+
+
+Which accounts used facebook as a channel to contact customers more than 6 times?
+
+
+Which account used facebook most as a channel?
+
+
+Which channel was most frequently used by most accounts?
+
