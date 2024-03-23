@@ -14,7 +14,7 @@ For each account, determine the average amount spent per order on each paper typ
   GROUP BY name;
 
 Determine the number of times a particular channel was used in the web_events table for each sales rep. Your final table should have three columns - the name of the sales rep, the channel, and the number of occurrences. Order your table with the highest number of occurrences first.
-  SELECT s.name, w.channel, COUNT(channel) channel_count
+  SELECT s.name, w.channel, COUNT(*) channel_count
   FROM web_events w
   JOIN accounts a
   ON w.account_id = a.id
@@ -24,7 +24,7 @@ Determine the number of times a particular channel was used in the web_events ta
   ORDER BY channel_count DESC;
 
 Determine the number of times a particular channel was used in the web_events table for each region. Your final table should have three columns - the region name, the channel, and the number of occurrences. Order your table with the highest number of occurrences first.
-  SELECT r.name, COUNT(channel) channel_count, w.channel
+  SELECT r.name, COUNT(*) channel_count, w.channel
   FROM web_events w
   JOIN accounts a
   ON w.account_id = a.id
@@ -41,3 +41,5 @@ Use DISTINCT to test if there are any accounts associated with more than one reg
   FROM accounts;
 
 Have any sales reps worked on more than one account?
+  SELECT DISTINCT id, name
+  FROM sales_reps;
