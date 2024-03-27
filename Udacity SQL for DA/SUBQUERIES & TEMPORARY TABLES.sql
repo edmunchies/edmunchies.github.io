@@ -79,10 +79,38 @@ JOIN (
 ON t2.region = t3.region AND t2.max = t3.total_sales;
 
 2. For the region with the largest (sum) of sales total_amt_usd, how many total (count) orders were placed?
-
+SELECT r.name, COUNT(o.total) order_count 
+    FROM region r
+    JOIN sales_reps s
+    ON r.id = s.region_id
+    JOIN accounts a
+    ON s.id = a.sales_rep_id
+    JOIN orders o
+    ON a.id = o.account_id 
+    GROUP BY 1
+    HAVING SUM(total_amt_usd) =
+    (SELECT MAX(total_sales) FROM   
+        (SELECT r.name AS region, SUM(total_amt_usd) total_sales
+                    FROM orders o
+                    JOIN accounts a 
+                    ON o.account_id = a.id
+                    JOIN sales_reps s
+                    ON s.id = a.sales_rep_id
+                    JOIN region r
+                    ON s.region_id = r.id
+                    GROUP BY 1
+                    ORDER BY total_sales DESC) t1
+    );
 
 3. How many accounts had more total purchases than the account name which has bought the most standard_qty paper throughout their lifetime as a customer?
-
+  SELECT COUNT(*) total_accts FROM (
+    SELECT a.name, SUM(o.standard_qty), COUNT(*) orders
+    FROM orders o 
+    JOIN accounts a
+    ON a.id = o.account_id
+    GROUP BY 1
+    ORDER BY sum DESC) t1
+  WHERE t1.orders > 56;
 
 4. For the customer that spent the most (in total over their lifetime as a customer) total_amt_usd, how many web_events did they have for each channel?
 
