@@ -49,6 +49,7 @@ If we are returning an entire table, then we must use an ALIAS for the table, an
     FROM orders
     WHERE DATE_TRUNC('month', occurred_at) = 
       (SELECT DATE_TRUNC('month', MIN(occurred_at)) FROM orders);
+
 -- More tests
 1. Provide the name of the sales_rep in each region with the largest amount of total_amt_usd sales.
 SELECT t3.name, t3.region, t3.total_sales FROM 
@@ -103,14 +104,28 @@ SELECT r.name, COUNT(o.total) order_count
     );
 
 3. How many accounts had more total purchases than the account name which has bought the most standard_qty paper throughout their lifetime as a customer?
-  SELECT COUNT(*) total_accts FROM (
-    SELECT a.name, SUM(o.standard_qty), COUNT(*) orders
-    FROM orders o 
-    JOIN accounts a
-    ON a.id = o.account_id
-    GROUP BY 1
-    ORDER BY sum DESC) t1
-  WHERE t1.orders > 56;
+  
+SELECT COUNT(*)
+  FROM (
+          SELECT a.name, SUM(o.total) sum_total
+          FROM accounts a
+          JOIN orders o
+          ON o.account_id = a.id
+          GROUP BY 1
+          ORDER BY 2 DESC
+        ) sub
+    WHERE sum_total > (
+                        SELECT total
+                        FROM (
+                              SELECT a.name account, SUM(o.standard_qty) standard_max, SUM(o.total) total
+                              FROM accounts a
+                              JOIN orders o
+                              ON a.id = o.account_id
+                              GROUP BY 1
+                              ORDER BY 2 DESC
+                              LIMIT 1     
+                              ) sub
+                        )
 
 4. For the customer that spent the most (in total over their lifetime as a customer) total_amt_usd, how many web_events did they have for each channel?
 
