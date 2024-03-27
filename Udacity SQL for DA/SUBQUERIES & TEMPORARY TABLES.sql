@@ -51,20 +51,32 @@ If we are returning an entire table, then we must use an ALIAS for the table, an
       (SELECT DATE_TRUNC('month', MIN(occurred_at)) FROM orders);
 -- More tests
 1. Provide the name of the sales_rep in each region with the largest amount of total_amt_usd sales.
-SELECT region, MAX(total_sales) FROM   
-  (SELECT s.name AS name, r.name AS region, SUM(total_amt_usd) 		 total_sales
-        FROM orders o
-        JOIN accounts a 
-        ON o.account_id = a.id
-        JOIN sales_reps s
-        ON s.id = a.sales_rep_id
-        JOIN region r
-        ON s.region_id = r.id
-        GROUP BY 1, 2
-        ORDER BY total_sales DESC
-     ) sub
-     GROUP BY 1
-     ORDER BY max DESC;
+SELECT t3.name, t3.region, t3.total_sales FROM 
+  (SELECT region, MAX(total_sales) FROM    
+      (SELECT s.name AS name, r.name AS region, SUM(total_amt_usd) total_sales
+            FROM orders o
+            JOIN accounts a 
+            ON o.account_id = a.id
+            JOIN sales_reps s
+            ON s.id = a.sales_rep_id
+            JOIN region r
+            ON s.region_id = r.id
+            GROUP BY 1, 2
+            ORDER BY total_sales DESC
+         ) t1
+         GROUP BY 1
+         ORDER BY max DESC) t2 
+JOIN (
+  SELECT s.name AS name, r.name AS region, SUM(total_amt_usd) total_sales
+            FROM orders o
+            JOIN accounts a 
+            ON o.account_id = a.id
+            JOIN sales_reps s
+            ON s.id = a.sales_rep_id
+            JOIN region r
+            ON s.region_id = r.id
+            GROUP BY 1, 2) t3
+ON t2.region = t3.region AND t2.max = t3.total_sales;
 
 2. For the region with the largest (sum) of sales total_amt_usd, how many total (count) orders were placed?
 
