@@ -77,6 +77,39 @@ GROUP BY r.name
 HAVING SUM(o.total_amt_usd) = (SELECT * FROM t2);
 
 How many accounts had more total purchases than the account name which has bought the most standard_qty paper throughout their lifetime as a customer?
+WITH t1 AS
+  (SELECT a.name, SUM(o.standard_qty) AS total_std, SUM(o.total) AS total_orders
+  FROM accounts a
+  JOIN orders o 
+  ON a.id = o.account_id
+  GROUP BY 1),
+
+  t2 AS
+  (SELECT MAX(total_std)
+  FROM t1),
+
+  t3 AS
+  (SELECT a.name, SUM(o.total) AS total_orders
+  FROM accounts a 
+  JOIN orders o 
+  ON a.id = o.account_id
+  GROUP BY 1
+  HAVING SUM(o.standard_qty) = (SELECT * FROM t2)),
+  
+  t4 AS
+  (SELECT total_orders
+  FROM t3),
+
+  t5 AS 
+  (SELECT a.name, SUM(o.total) AS total_orders
+  FROM accounts a 
+  JOIN orders o 
+  ON a.id = o.account_id 
+  GROUP BY 1
+  HAVING SUM(o.total)
+  > (SELECT * FROM t4))
+  
+  SELECT COUNT(*) FROM t5;
 
 
 For the customer that spent the most (in total over their lifetime as a customer) total_amt_usd, how many web_events did they have for each channel?
