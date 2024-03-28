@@ -66,6 +66,7 @@ WITH t1 AS (
 t2 AS (
       SELECT MAX(total_amt)
       FROM t1)
+
 SELECT r.name, COUNT(o.total) total_orders
 FROM sales_reps s
 JOIN accounts a
