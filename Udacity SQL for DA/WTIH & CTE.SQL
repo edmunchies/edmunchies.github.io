@@ -124,12 +124,12 @@ WITH t1 AS
   ORDER BY 3 DESC
   LIMIT 1)
   
-SELECT w.channel, COUNT(*) AS channel_count
+SELECT a.name, w.channel, COUNT(*) AS channel_count
 FROM web_events w
 JOIN accounts a 
 ON w.account_id = a.id
 WHERE w.account_id = (SELECT t1.id FROM t1)
-GROUP BY 1
+GROUP BY 1, 2
 
 
 What is the lifetime average amount spent in terms of total_amt_usd for the top 10 total spending accounts?
