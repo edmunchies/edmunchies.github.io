@@ -56,7 +56,6 @@ WITH t1 AS (
   JOIN orders o
   ON a.id = o.account_id
   GROUP BY 1, 2)
-   
  
  SELECT t3.name, t3.region, t3.total_sales 
  FROM t2
