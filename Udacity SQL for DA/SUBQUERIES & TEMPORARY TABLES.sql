@@ -1,4 +1,7 @@
 -- Intro Practice
+-- Use a column alias for a subquery when table returns multiple rows. When returning a single value, no alias needed.
+-- You can join on multiple parameters
+
 1. Find the number of events that occur for each day for each channel
   SELECT DATE_TRUNC('day', w.occurred_at) AS day, w.channel, COUNT(*) AS num_events
   FROM web_events w
@@ -128,9 +131,37 @@ SELECT COUNT(*)
                         )
 
 4. For the customer that spent the most (in total over their lifetime as a customer) total_amt_usd, how many web_events did they have for each channel?
-
+SELECT a.name, w.channel, COUNT(*) AS num_events
+FROM accounts a
+JOIN web_events w
+ON w.account_id = a.id AND a.id =
+  (SELECT t1.id FROM (
+    SELECT a.id, a.name, SUM(o.total_amt_usd) total_spend
+    FROM accounts a
+    JOIN orders o 
+    ON a.id= o.account_id
+    GROUP BY 1,2
+    ORDER BY total_spend DESC
+    LIMIT 1) t1)
+GROUP BY 1, 2;
 
 5. What is the lifetime average amount spent in terms of total_amt_usd for the top 10 total spending accounts?
+SELECT AVG(lifetime_spend) FROM 
+  (SELECT a.name, SUM(o.total_amt_usd) AS lifetime_spend, COUNT(*) AS num_orders
+    FROM accounts a
+    JOIN orders o
+    ON a.id = o.account_id
+    GROUP BY 1
+    ORDER BY 2 DESC
+    LIMIT 10) t1;
 
-
-5. What is the lifetime average amount spent in terms of total_amt_usd, including only the companies that spent more per order, on average, than the average of all orders.
+6. What is the lifetime average amount spent in terms of total_amt_usd, including only the companies that spent more per order, on average, than the average of all orders.
+SELECT AVG(t1.avg) FROM  
+ (SELECT a.name, AVG(o.total_amt_usd)
+  FROM accounts a
+  JOIN orders o 
+  ON a.id = o.account_id
+  GROUP BY 1
+  HAVING AVG(o.total_amt_usd) > 
+    (SELECT AVG(o.total_amt_usd) 
+    FROM orders o)) t1;
