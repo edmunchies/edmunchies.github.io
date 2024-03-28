@@ -46,6 +46,7 @@ t2 AS (
       SELECT region_name, MAX(total_amt) total_amt
       FROM t1
       GROUP BY 1)
+
 SELECT t1.rep_name, t1.region_name, t1.total_amt
 FROM t1
 JOIN t2
