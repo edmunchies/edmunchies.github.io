@@ -16,3 +16,31 @@ LEFT, RIGHT, and TRIM are all used to select only certain elements of strings, b
 Though we didn't cover TRIM in this lesson explicitly, it can be used to remove characters from the beginning and end of a string. This can remove unwanted spaces at the beginning or end of a row that often happen with data being moved from Excel or other storage systems.
 
 There are a number of variations of these functions, as well as several other string functions not covered here. Different databases use subtle variations on these functions, so be sure to look up the appropriate database’s syntax if you’re connected to a private database.
+
+--Practice 
+1. Write a query to change the date from sf_crime_data into the correct format. Use SUBSTR and CONCAT
+WITH t1 AS
+(SELECT SUBSTR(date, 1, 10) AS clean_date FROM sf_crime_data)
+SELECT SUBSTR(clean_date, 7, 4) AS year, SUBSTR(clean_date, 1, 2) AS month, SUBSTR(clean_date, 4, 2) AS day FROM t1
+
+OR
+
+SELECT date orig_date, (SUBSTR(date, 7, 4) || '-' || LEFT(date, 2) || '-' || SUBSTR(date, 4, 2)) new_date
+FROM sf_crime_data;
+
+2. Once you have created a column in the correct format, use CAST to convert into a date
+WITH t1 AS
+(SELECT SUBSTR(date, 1, 10) AS clean_date FROM sf_crime_data),
+
+t2 AS
+(SELECT SUBSTR(clean_date, 7, 4) AS year, SUBSTR(clean_date, 1, 2) AS month, SUBSTR(clean_date, 4, 2) AS day FROM t1),
+
+t3 AS
+(SELECT t2.year || '-' || t2.month || '-' || t2.day AS new_date FROM t2)
+
+SELECT CAST(t3.new_date AS date) FROM t3;
+
+OR
+
+SELECT date orig_date, (SUBSTR(date, 7, 4) || '-' || LEFT(date, 2) || '-' || SUBSTR(date, 4, 2))::DATE new_date
+FROM sf_crime_data;
